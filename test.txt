@@ -1,1 +1,53 @@
-123测撒1
+git 多账户实现  同时选择使用github 以及 gitlab
+    1.删除全局设置        git config --global --list 查看是否拥有全局设置
+    2.$ git config --global --unset user.name"你的名字"
+      $ git config --global --unset user.email"你的邮箱"
+    3.生成github秘钥
+        $ ssh-keygen -t rsa -C "895852803@qq.com.com" -f ~/.ssh/github_id-rsa
+      生成gitlab秘钥
+        $ ssh-keygen -t rsa -C "gaoyan@51signing.com" -f ~/.ssh/gitlab_id-rsa
+    4.之后在~/.ssh目录下将新增4个文件
+    5.将对应的pub文件放到对应的ssh连接中
+        $ ssh-agent bash
+        永久加入秘钥文件
+        $ ssh-add -k ~/.ssh/github_id-rsa
+        $ ssh-add -k ~/.ssh/gitlab_id-rsa
+    6.自定义config文件
+        # 添加以下内容
+        # gitlab
+        Host gitlab.com
+            HostName 192.168.1.210
+            PreferredAuthentications publickey
+            IdentityFile ~/.ssh/gitlab_id-rsa
+        # github
+        Host nnrc
+            HostName github.com
+            PreferredAuthentications publickey
+            IdentityFile ~/.ssh/github_id-rsa
+
+    7.配置仓库
+     假设gitlab与jgithub的工作目录分别如下所示：
+
+    github工作仓库:~/workspace/github
+    gitlab工作仓库:~/workspace/gitlab
+    则配置如下：
+
+    复制代码
+    #gitlab
+    cd ~/workspace/gitlab
+    git init
+    git config --global user.name 'gitlab'
+    git config --global user.email 'gitlab@company.com'
+
+    #github
+    cd ~/workspace/github
+    git init
+    git config --local user.name 'personal'
+    git config --local user.email 'personal@163.com'
+    复制代码
+    4.测试
+    # 测试github
+    $ ssh -T git@github.com
+
+    # 测试gitlab
+    $ ssh -T git@gitlab.com
